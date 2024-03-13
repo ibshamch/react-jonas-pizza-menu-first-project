@@ -1,5 +1,4 @@
 import React from "react";
-import { ReactDOM } from "react-dom/client";
 import "./index.css";
 const pizzaData = [
   {
@@ -59,58 +58,78 @@ function App() {
 export default App;
 
 function Header() {
-  const style = { color: "red", fontSize: "3rem", textTransform: "uppercase" };
   return (
     <header className="header">
-      <h1>Fast React Pizza Co.</h1>;
+      <h1>Fast React Pizza Co.</h1>
     </header>
   );
 }
 
 function Footer() {
   const hour = new Date().getHours();
-  const openHour = 12;
-  const closeHour = 4;
+  const openHour = 8;
+  const closeHour = 24;
   const isOpen = hour >= openHour && hour <= closeHour;
 
   return (
     <footer className="footer">
-      {new Date().toLocaleTimeString()}
-      <span>{isOpen ? " We are open" : " We are closed"}</span>
+      {/* && true ho to next render hoga
+       || false ho to next render hoga */}
+      {isOpen && <Order closeHour={closeHour} />}
     </footer>
   );
 }
+
+function Order({ closeHour }) {
+  return (
+    <div className="order">
+      <p>{`We are open until ${closeHour}:00. Come visit us or order online.`}</p>
+      <button className="btn">Order</button>
+    </div>
+  );
+}
+
 function Menu() {
+  const pizzas = pizzaData;
+  const numPizzas = pizzas.length;
+
   return (
     <main className="menu">
       <h2>Our Menu</h2>
-      <Pizza
-        name="Pizza Spinaci"
-        ingredient="Tomato, mozarella, spinach, and ricotta cheese"
-        photoName="pizzas/spinaci.jpg"
-        price={10}
-      />
-      <Pizza
-        name="Pizza Funghi"
-        ingredient="Tomato,mashroom"
-        photoName="pizzas/funghi.jpg"
-        price={22}
-      />
+
+      {/*  */}
+      {numPizzas > 0 ? (
+        <>
+          <p>
+            Authentic Italian cuisine. 6 creative dishes to choose from. All
+            from our stone oven, all organic, all delicious
+          </p>
+          <ul className="pizzas">
+            {pizzaData.map((pizza) => {
+              const { name } = pizza;
+              return <Pizza pizza={pizza} key={name} />;
+            })}
+          </ul>
+        </>
+      ) : (
+        <p>We are still working on the menu.Please come back later</p>
+      )}
     </main>
   );
 }
 
-function Pizza(props) {
-  console.log(props);
+function Pizza({ pizza }) {
+  const { photoName, name, ingredients, price } = pizza;
+
   return (
-    <div className="pizza">
-      <img src={props.photoName} alt="pizza-pic" />
+    <li className={`pizza ${pizza.soldOut ? "sold-out" : ""}`}>
+      <img src={photoName} alt="pizza-pic" />
       <div>
-        <h3>{props.name}</h3>
-        <p>{props.ingredient}</p>
-        <span>{props.price}</span>
+        <h3>{name}</h3>
+        <p>{ingredients}</p>
+        <span>{pizza.soldOut ? "Sold Out" : price}</span>
       </div>
       {/*webpack automatically detects from public folder*/}
-    </div>
+    </li>
   );
 }
